@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Shop {
+  id        String    @id @default(cuid())
+  name      String
+  imageUrl  String?   @map("image_url")
+  rating    Float     @default(4)
+  createdAt DateTime  @default(now()) @map("created_at")
+  products  Product[]
+
+  @@map("shops")
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id              String      @id @default(cuid())
+  name            String
+  price           Float
+  imageUrl        String?     @map("image_url")
+  discountPercent Int         @default(0) @map("discount_percent")
+  shopId          String      @map("shop_id")
+  categoryId      String      @map("category_id")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  shop            Shop        @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  category        Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  orderItems      OrderItem[]
+
+  @@index([shopId])
+  @@index([categoryId])
+  @@index([price])
+  @@map("products")
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  email      String
+  phone      String
+  address    String
+  totalPrice Float       @map("total_price")
+  couponCode String?     @map("coupon_code")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  items      OrderItem[]
+
+  @@index([email, phone])
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String  @map("order_id")
+  productId String  @map("product_id")
+  quantity  Int
+  price     Float
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+model Coupon {
+  id              String  @id @default(cuid())
+  name            String
+  code            String  @unique
+  discountPercent Int     @map("discount_percent")
+  imageUrl        String? @map("image_url")
+  active          Boolean @default(true)
+
+  @@map("coupons")
+}
