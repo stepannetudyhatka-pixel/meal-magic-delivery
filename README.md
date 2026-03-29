@@ -13,7 +13,7 @@ Web application for ordering food delivery.
 - `frontend/`: React + TypeScript + Vite
 - `backend/`: NestJS + Prisma ORM + SQLite
 - API docs: Swagger (`/api`)
-- Architecture docs: C4 in [docs/C4.md](/docs/C4.md)
+- Architecture docs: C4 in [docs/C4.md](docs/c4.md)
 - Containerization: Docker + Docker Compose
 - Deployment config: root `vercel.json`
 
